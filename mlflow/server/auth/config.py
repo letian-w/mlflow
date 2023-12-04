@@ -1,3 +1,4 @@
+import os
 import configparser
 from pathlib import Path
 from typing import NamedTuple
@@ -24,11 +25,26 @@ def read_auth_config() -> AuthConfig:
     config = configparser.ConfigParser()
     config.read(config_path)
     return AuthConfig(
-        default_permission=config["mlflow"]["default_permission"],
-        database_uri=config["mlflow"]["database_uri"],
-        admin_username=config["mlflow"]["admin_username"],
-        admin_password=config["mlflow"]["admin_password"],
-        authorization_function=config["mlflow"].get(
-            "authorization_function", "mlflow.server.auth:authenticate_request_basic_auth"
+        default_permission=os.getenv(
+            "MLFLOW_AUTH_DEFAULT_PERMISSION",
+            config["mlflow"]["default_permission"]
+        ),
+        database_uri=os.getenv(
+            "MLFLOW_AUTH_DATABASE_URI",
+            config["mlflow"]["database_uri"]
+        ),
+        admin_username=os.getenv(
+            "MLFLOW_AUTH_ADMIN_USERNAME",
+            config["mlflow"]["admin_username"]
+        ),
+        admin_password=os.getenv(
+            "MLFLOW_AUTH_ADMIN_PASSWORD",
+            config["mlflow"]["admin_password"]
+        ),
+        authorization_function=os.getenv(
+            "MLFLOW_AUTH_AUTHORIZATION_FUNCTION",
+            config["mlflow"].get(
+                "authorization_function", "mlflow.server.auth:authenticate_request_basic_auth"
+            )
         ),
     )
